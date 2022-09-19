@@ -2,26 +2,24 @@ from pytesseract import pytesseract
 from sys import platform
 from os.path import exists
 import json
-import logging
-logging.basicConfig(filename='application.log', encoding='utf-8', level=logging.DEBUG )
+from ..log.wraplog import WrapLog
 
 class Config:
 
     def __init__(self):
-        logging.info('[CONFIG][__init__]')
+        self.__log = WrapLog().log()
+        self.__log.info('[CONFIG][__init__]')
         file = self.__getConfigFile()
         path = file['tesseract']['path'][platform] + file['tesseract']['file'][platform]
-
         if (platform == 'win32'):
-            logging.info('[PLATFORM]=win32')
-            logging.info(path)
+            self.__log.info('[PLATFORM]=win32')
+            self.__log.info(path)
             check = self.__checkPathToTesseract(path)
             if (check == False):
-                logging.error("tesseract was not found")
+                self.__log.error("tesseract was not found")
                 exit()
         else:
-            logging.info('[PLATFORM]=linux')
-        
+            self.__log.info('[PLATFORM]=linux')
         self.__path_to_tesseract = path
 
     def __checkPathToTesseract(self, path: str):

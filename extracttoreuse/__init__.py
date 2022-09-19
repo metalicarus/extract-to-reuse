@@ -2,22 +2,26 @@
 import logging
 from PIL import Image
 from extracttoreuse.config.config import Config
-
-logging.basicConfig(filename='application.log', encoding='utf-8', level=logging.DEBUG )
-
+from extracttoreuse.log.wraplog import WrapLog
+from extracttoreuse.gui.gui import Gui
 
 class ExtractToUse:
 
     def __init__(self):
 
-        path_to_image = 'data/Caras-08-10.jpg'
-        img = Image.open(path_to_image)
+        gui = Gui()
+        gui.show()
 
-        logging.info('[APPLICATION][START]')
-        config = Config()
-        pytesseract = config.getPytesseract()
-        text = pytesseract.image_to_string(img)
 
-        file = open('data/text.txt', 'a')
-        file.write(text)
-        file.close()
+        # self.__log = WrapLog().log()
+        # path_to_image = 'data/Caras-08-10.jpg'
+        # img = Image.open(path_to_image)
+
+        # self.__log.info('[APPLICATION][START]')
+        # config = Config()
+        # pytesseract = config.getPytesseract()
+        # text = pytesseract.image_to_string(img)
+
+        # file = open('data/text.txt', 'a')
+        # file.write(text)
+        # file.close()
