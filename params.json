@@ -1,0 +1,12 @@
+{
+    "tesseract": {
+        "path": {
+            "win32": "C:\\Program Files\\Tesseract-OCR\\",
+            "linux": ""
+        },
+        "file": {
+            "win32": "tesseract.exe",
+            "linux": ""
+        }
+    }
+}
