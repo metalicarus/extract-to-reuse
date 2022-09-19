@@ -28,7 +28,7 @@ class Config:
         return exists(path)
 
     def __getConfigFile(self):
-        return json.load(open("params.json"))
+        return json.load(open("data/params.json"))
     
     def getPytesseract(self) -> pytesseract:
         print(self.__path_to_tesseract)
