@@ -1,6 +1,8 @@
 from _tkinter import *
 from array import array
-from tkinter import CENTER, Button, Entry, Frame, Grid, Label, Tk
+from tkinter import CENTER, LEFT, TRUE, Button, Entry, Frame, Grid, Label, Tk
+from tkinter import filedialog
+from tkinter.filedialog import FileDialog
 from tkinter.messagebox import NO
 from tkinter.ttk import Treeview
 import os
@@ -10,51 +12,50 @@ from extracttoreuse.model.image import Image
 class Gui:
 
     __root = Tk()
+    __path = ""
+    __images = []
+
 
     def __init__(self) -> None:
         pass
 
-    def listImages(self):
-        path = "C:\\Users\\silvamateus\\python\\extract-to-reuse\\data\\"
-        images = []
-        for f in os.listdir(path):
-            if (os.path.isfile(path + f)):
-                if (f.endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))):
-                    images.append(Image(path + f))
-        return images
-
     def show(self) -> None:
-        
-        self.__root.title("undefined")
-        width=600
-        height=500
-        screenwidth = self.__root.winfo_screenwidth()
-        screenheight = self.__root.winfo_screenheight()
-        alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
-        self.__root.geometry(alignstr)
+        self.__root.title("Extract to reuse")
+        self.__root.geometry('%dx%d+%d+%d' % (600, 500, (self.__root.winfo_screenwidth() - 600) / 2, (self.__root.winfo_screenheight() - 500) / 2))
         self.__root.resizable(width=False, height=False)
-
-        game_frame = Frame(self.__root)
-        game_frame.pack()
-        my_game = Treeview(game_frame)
-
-        my_game['columns'] = ('id', 'image_path')
-
-        my_game.column("#0", width=0,  stretch=NO)
-        my_game.column("id",anchor=CENTER, width=40)
-        my_game.column("image_path",anchor=CENTER, width=400)
+        self.__generatePathDialogBtn()
+        self.__generateTable()
+        self.__root.mainloop()
     
+    def __listImages(self) -> None:
+        self.__images = []
+        for f in os.listdir(self.__path):
+            if (f.endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))):
+                self.__images.append(Image(self.__path + f))
 
-        my_game.heading("#0",text="",anchor=CENTER)
-        my_game.heading("id",text="Id",anchor=CENTER)
-        my_game.heading("image_path",text="Image path",anchor=CENTER)
- 
- 
+    def __selectPath(self) -> None:
+        self.__path = filedialog.askdirectory(initialdir="/", title="Select a dir")
+        self.__populate()
+
+    def __populate(self) -> None:
         index = 1
-        for image in self.listImages():
-            my_game.insert(parent='', index='end', iid=index - 1, text='', values=(index, image.getPath()))
+        self.__listImages()
+        for image in self.__images:
+            self.__root.treeview.insert(parent='', index='end', iid=index - 1, text='', values=(index, image.getPath()))
             index = index + 1
 
-        my_game.pack()
+    def __generateTable(self) -> None:
+        frame = Frame(self.__root)
+        frame.pack()
+        self.__root.treeview = Treeview(frame)
+        self.__root.treeview['columns'] = ('id', 'image_path')
+        self.__root.treeview.column("#0", width=0,  stretch=NO)
+        self.__root.treeview.column("id",anchor=CENTER, width=40)
+        self.__root.treeview.column("image_path",anchor=CENTER, width=400)
+        self.__root.treeview.heading("#0",text="",anchor=CENTER)
+        self.__root.treeview.heading("id",text="Id",anchor=CENTER)
+        self.__root.treeview.heading("image_path",text="Image path",anchor=CENTER)
+        self.__root.treeview.pack()
 
-        self.__root.mainloop()
+    def __generatePathDialogBtn(self) -> None:
+        Button(self.__root, text= "Select a directory", command=self.__selectPath, width= 35).grid(row=1, column=1)
